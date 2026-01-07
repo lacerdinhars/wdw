@@ -1,5 +1,5 @@
--- DIVISIONAL NINJA V15 (ULTIMATE LOOSE MAGNET)
--- FOCO: APEX HARD | SEM TRAVAS | 100% LEGIT
+-- DIVISIONAL NINJA V17 (WDW - THE LOOSE MAGNET)
+-- Focado em: Magnetismo Real, Sem Visuais, Sem Trava de Câmera
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -7,17 +7,18 @@ local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
 
--- AJUSTES DE PERFORMANCE (ESTILO LOOSE)
+-- CONFIGURAÇÕES IGUAL AO VÍDEO DO LOOSE
 local MagnetAtivo = true
-local Suavidade = 0.17 -- Velocidade do imã (Aumente se quiser que grude mais rápido)
-local RaioInvisivel = 80 -- Área de alcance (Onde o imã começa a "sentir" o inimigo)
+local ForcaIma = 0.18 -- Suavidade da puxada
+local RaioInvisivel = 75 -- Alcance da assistência
 
 local function GetClosestTarget()
     local target = nil
     local shortestDist = RaioInvisivel
 
     for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Team ~= LocalPlayer.Team and p.Character and p.Character:FindFirstChild("Head") then
+        -- Ignora você, seu time e quem já morreu
+        if p ~= LocalPlayer and p.Team ~= LocalPlayer.Team and p.Character and p.Character:FindFirstChild("Head") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
             local head = p.Character.Head
             local screenPos, onScreen = Camera:WorldToViewportPoint(head.Position)
 
@@ -35,30 +36,29 @@ local function GetClosestTarget()
     return target
 end
 
--- Mecanismo de Magnetismo Teleguiado
 RunService.RenderStepped:Connect(function()
     if MagnetAtivo then
         local target = GetClosestTarget()
         if target then
             local mousePos = Vector2.new(Mouse.X, Mouse.Y)
-            -- Movimento relativo suave para a cabeça
-            local diffX = (target.X - mousePos.X) * Suavidade
-            local diffY = (target.Y - mousePos.Y) * Suavidade
+            -- Calcula o movimento sutil (Magnet)
+            local diffX = (target.X - mousePos.X) * ForcaIma
+            local diffY = (target.Y - mousePos.Y) * ForcaIma
             
-            -- Usa movimento de mouse real para evitar detecção
+            -- Usa o método de movimento de mouse real do Solara
             if typeof(mousemoverel) == "function" then
                 mousemoverel(diffX, diffY)
             else
-                -- Backup suave para outros executores
+                -- Fallback suave para evitar travas de câmera
                 local currentCF = Camera.CFrame
                 local newCF = CFrame.new(currentCF.Position, Camera:ViewportPointToRay(target.X, target.Y).Direction * 100 + currentCF.Position)
-                Camera.CFrame = currentCF:Lerp(newCF, Suavidade)
+                Camera.CFrame = currentCF:Lerp(newCF, ForcaIma)
             end
         end
     end
 end)
 
--- ESP de Alta Performance (Tecla V)
+-- Tecla [V] para o ESP (Apenas contorno discreto)
 local EspOn = false
 Mouse.KeyDown:Connect(function(key)
     if key:lower() == "v" then
@@ -66,13 +66,13 @@ Mouse.KeyDown:Connect(function(key)
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= LocalPlayer and p.Character then
                 if EspOn then
-                    local h = p.Character:FindFirstChild("LooseV15") or Instance.new("Highlight", p.Character)
-                    h.Name = "LooseV15"
-                    h.FillTransparency = 1 -- Mantém o boneco com cor original
+                    local h = p.Character:FindFirstChild("LooseWDW") or Instance.new("Highlight", p.Character)
+                    h.Name = "LooseWDW"
+                    h.FillTransparency = 1 
                     h.OutlineColor = (p.Team == LocalPlayer.Team) and Color3.new(0, 1, 0) or Color3.new(1, 0, 0)
                     h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                 else
-                    if p.Character:FindFirstChild("LooseV15") then p.Character.LooseV15:Destroy() end
+                    if p.Character:FindFirstChild("LooseWDW") then p.Character.LooseWDW:Destroy() end
                 end
             end
         end
